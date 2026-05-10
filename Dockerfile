@@ -19,10 +19,10 @@ COPY . /var/www/html/
 RUN chown -R www-data:www-data /var/www/html/imgs \
     && chmod -R 755 /var/www/html/imgs
 
-# Use entrypoint script to set Apache port from Railway's $PORT env var
-COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
-RUN chmod +x /usr/local/bin/docker-entrypoint.sh
-
 EXPOSE 80
 
-ENTRYPOINT ["docker-entrypoint.sh"]
+# Railway sets $PORT dynamically — update Apache to listen on it at startup
+CMD PORT="${PORT:-80}" && \
+    sed -i "s/Listen 80/Listen $PORT/" /etc/apache2/ports.conf && \
+    sed -i "s/<VirtualHost \*:80>/<VirtualHost *:$PORT>/" /etc/apache2/sites-enabled/000-default.conf && \
+    apache2-foreground
