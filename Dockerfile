@@ -3,6 +3,9 @@ FROM php:8.2-apache
 # Install mysqli extension
 RUN docker-php-ext-install mysqli
 
+# mod_php requires mpm_prefork; disable mpm_event to avoid "More than one MPM loaded" error
+RUN a2dismod mpm_event && a2enmod mpm_prefork
+
 # Enable mod_rewrite for clean URLs
 RUN a2enmod rewrite
 
