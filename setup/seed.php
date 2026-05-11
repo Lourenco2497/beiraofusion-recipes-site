@@ -32,7 +32,11 @@ if ($r->num_rows === 0) {
     $sql = ltrim($sql, "\xEF\xBB\xBF");  // strip UTF-8 BOM if present
     foreach (array_filter(array_map('trim', explode(';', $sql))) as $stmt) {
         if ($stmt === '' || preg_match('/^--/', $stmt)) continue;
-        $conn->query($stmt);
+        try {
+            $conn->query($stmt);
+        } catch (Exception $e) {
+            echo "Schema stmt skipped ({$e->getMessage()}): " . substr($stmt, 0, 60) . "\n";
+        }
     }
     echo "Schema imported.\n";
 }
