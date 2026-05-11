@@ -7,7 +7,7 @@ function new_db_connection()
     $hostname = getenv('MYSQLHOST')     ?: 'localhost';
     $username = getenv('MYSQLUSER')     ?: 'root';
     $password = getenv('MYSQLPASSWORD') ?: '';
-    $dbname   = getenv('MYSQLDATABASE') ?: 'beirao-fusion';
+    $dbname   = getenv('MYSQLDATABASE') ?: 'beirao_fusion';
     $port     = (int)(getenv('MYSQLPORT') ?: 3306);
 
     $local_link = mysqli_connect($hostname, $username, $password, $dbname, $port);

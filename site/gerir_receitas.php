@@ -1,4 +1,5 @@
 <?php
+session_start();
 require_once '../components/cp_head.php';
 ?>
 

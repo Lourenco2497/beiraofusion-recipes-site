@@ -3,7 +3,7 @@
     <h1 class="mt-5 pt-5 mb-4">Olá, bem-vindo de volta!</h1>
 
     <?php
-    session_start();
+    if (session_status() === PHP_SESSION_NONE) { session_start(); }
     if (isset($_SESSION['mensagem_erro'])) {
         echo '<div class="alert alert-danger">' . $_SESSION['mensagem_erro'] . '</div>';
         unset($_SESSION['mensagem_erro']);
