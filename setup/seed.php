@@ -29,6 +29,7 @@ $r = $conn->query("SHOW TABLES LIKE 'user_types'");
 if ($r->num_rows === 0) {
     echo "No tables found — importing schema...\n";
     $sql = file_get_contents(ROOT . '/setup/railway-schema.sql');
+    $sql = ltrim($sql, "\xEF\xBB\xBF");  // strip UTF-8 BOM if present
     foreach (array_filter(array_map('trim', explode(';', $sql))) as $stmt) {
         if ($stmt === '' || preg_match('/^--/', $stmt)) continue;
         $conn->query($stmt);
