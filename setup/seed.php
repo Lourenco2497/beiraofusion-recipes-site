@@ -23,6 +23,19 @@ if (!$conn) {
     exit(0);
 }
 
+// ── Base schema (Railway: import if tables don't exist yet) ──────────────────
+
+$r = $conn->query("SHOW TABLES LIKE 'user_types'");
+if ($r->num_rows === 0) {
+    echo "No tables found — importing schema...\n";
+    $sql = file_get_contents(ROOT . '/setup/railway-schema.sql');
+    foreach (array_filter(array_map('trim', explode(';', $sql))) as $stmt) {
+        if ($stmt === '' || preg_match('/^--/', $stmt)) continue;
+        $conn->query($stmt);
+    }
+    echo "Schema imported.\n";
+}
+
 // ── Schema patches (run every boot, idempotent) ───────────────────────────────
 
 foreach (['description TEXT NULL', "image_url VARCHAR(255) NULL DEFAULT 'cupao.png'", 'valid_until DATE NULL'] as $colDef) {
