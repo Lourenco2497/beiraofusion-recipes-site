@@ -3,11 +3,25 @@ declare(strict_types=1);
 
 define('ROOT', dirname(__DIR__));
 
-echo "Waiting for database...\n";
-sleep(3);
-
 require_once ROOT . '/connections/connections.php';
-$conn = new_db_connection();
+
+echo "Waiting for database...\n";
+$conn    = null;
+$attempt = 0;
+while ($attempt < 20) {
+    try {
+        $conn = new_db_connection();
+        break;
+    } catch (Exception $e) {
+        $attempt++;
+        echo "Not ready (attempt $attempt/20): {$e->getMessage()}\n";
+        sleep(3);
+    }
+}
+if (!$conn) {
+    echo "Could not connect after 20 attempts. Skipping seed.\n";
+    exit(0);
+}
 
 // ── Schema patches (run every boot, idempotent) ───────────────────────────────
 
